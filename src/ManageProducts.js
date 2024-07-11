@@ -21,7 +21,7 @@ class ManageProducts {
     addProduct = async (product) => {
         //create function to validate product format
         const parsedResult = await this.#readFile()
-        const id = parsedResult.at(-1).id + 1 //test if it works for empty file ( [] )
+        const id = parsedResult.length === 0 ? 1 : parsedResult.at(-1).id + 1
         const newProduct = {
             id: id, 
             ...product
@@ -53,7 +53,7 @@ class ManageProducts {
         const product = parsedResult.find(product => product.id === +id) 
         console.log(parsedResult, id, product)
         let index = parsedResult.indexOf(product)
-        console.log(index)
+
         if (index !== -1) {
             console.log(parsedResult)
             parsedResult.splice(index, 1)
