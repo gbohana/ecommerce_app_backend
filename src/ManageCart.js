@@ -5,7 +5,6 @@ class ManageCart {
 
     constructor(){
         this.#path = `${__dirname}/data/cart.json`
-        this.createCart()
     }
 
     #readFile = async () => {
@@ -19,24 +18,52 @@ class ManageCart {
         await fs.promises.writeFile(this.#path, dataToSave)
     }
 
-    createCart = () => {
-
-    }
-    
-    getProducts = async (limit) => {
+    createCart = async (products) => {
         const parsedResult = await this.#readFile()
-        if (limit > 0 && limit <= parsedResult.length) {
-            return parsedResult.slice(0, limit)
+        //change to uuid later
+        const id = parsedResult.length === 0 ? 1 : parsedResult.at(-1).id + 1
+        const newCart = {
+            id: id,
+            products: products ? products : []
+        }
+        parsedResult.push(newCart)
+        await this.#writeFile(parsedResult)
+        
+        return newCart
+    }
+
+    getCartById = async (id) => {
+        const results = await this.#readFile()
+        const cart = results.find(cart => cart.id === +id)
+        return cart ?? "Não encontrado"
+    }
+
+    addProducttoCart = async (cid, pid) => {
+        const parsedResult = await this.#readFile()
+        const cart = parsedResult.find(cart => cart.id === +cid)
+
+        if(!cart)
+            return "Carrinho não encontrado"
+
+        let index = parsedResult.indexOf(cart)
+
+        const products = parsedResult[index].products
+        const product = products.find(p => p.id === +pid)
+        let indexProduct = products.indexOf(product)
+
+        if(!product) {
+            const quantity = 1
+            const newProduct = {
+                id: +pid,
+                quantity: quantity
+            }
+            parsedResult[index].products.push(newProduct)
 
         } else {
-            return parsedResult
+            const quantity = parsedResult[index].products[indexProduct].quantity
+            parsedResult[index].products[indexProduct].quantity = quantity + 1
         }
-    }
-
-    getProductById = async (id) => {
-        const results = await this.#readFile()
-        const product = results.find(product => product.id === +id)
-        return product ?? "Não encontrado\n"
+        await this.#writeFile(parsedResult)
     }
 }
 
