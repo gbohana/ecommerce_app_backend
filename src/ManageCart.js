@@ -1,25 +1,14 @@
-const fs = require("fs");
+const Tools = require("./service/tools")
 
 class ManageCart {
-    #path
+    #path = `${__dirname}/data/cart.json`
 
     constructor(){
-        this.#path = `${__dirname}/data/cart.json`
-    }
-
-    #readFile = async () => {
-        let result = await fs.promises.readFile(this.#path, "utf-8")
-        const parsedResult = await JSON.parse(result)
-        return parsedResult
-    }
-
-    #writeFile = async (data) => {
-        const dataToSave = await JSON.stringify(data)
-        await fs.promises.writeFile(this.#path, dataToSave)
+        this.tools = new Tools(this.#path)
     }
 
     createCart = async (products) => {
-        const parsedResult = await this.#readFile()
+        const parsedResult = await this.tools.readFile()
         //change to uuid later
         const id = parsedResult.length === 0 ? 1 : parsedResult.at(-1).id + 1
         const newCart = {
@@ -27,23 +16,27 @@ class ManageCart {
             products: products ? products : []
         }
         parsedResult.push(newCart)
-        await this.#writeFile(parsedResult)
+        await this.tools.writeFile(parsedResult)
         
         return newCart
     }
 
     getCartById = async (id) => {
-        const results = await this.#readFile()
+        const results = await this.tools.readFile()
         const cart = results.find(cart => cart.id === +id)
-        return cart ?? "Não encontrado"
+
+        if(!cart)
+            throw new Error("Cart not found")
+
+        return cart
     }
 
     addProducttoCart = async (cid, pid) => {
-        const parsedResult = await this.#readFile()
+        const parsedResult = await this.tools.readFile()
         const cart = parsedResult.find(cart => cart.id === +cid)
 
         if(!cart)
-            return "Carrinho não encontrado"
+            throw new Error("Cart not found")
 
         let index = parsedResult.indexOf(cart)
 
@@ -63,7 +56,7 @@ class ManageCart {
             const quantity = parsedResult[index].products[indexProduct].quantity
             parsedResult[index].products[indexProduct].quantity = quantity + 1
         }
-        await this.#writeFile(parsedResult)
+        await this.tools.writeFile(parsedResult)
     }
 }
 
