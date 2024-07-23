@@ -1,0 +1,19 @@
+ <h1>All products:</h1>
+  <ul>
+    {{#each products}}
+        <li>
+            {{#with this}}
+            <p>
+                ID: {{id}},
+                Name: {{title}}, 
+                Description: {{description}},
+                Code: {{code}},
+                Price: {{price}},
+                Status: {{status}},
+                Stock: {{stock}},
+                Categories: {{categories}}
+            </p>
+            {{/with}}
+        </li>
+    {{/each}}
+  </ul>
