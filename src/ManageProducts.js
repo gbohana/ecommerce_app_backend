@@ -49,7 +49,7 @@ class ManageProducts {
             console.log(parsedResult)
             await this.tools.writeFile(parsedResult)
         }
-        return product
+        return parsedResult
     }
 
     getProducts = async (limit) => {

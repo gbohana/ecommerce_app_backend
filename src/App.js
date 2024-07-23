@@ -51,4 +51,17 @@ app.post("/socketprod", async (req, res) => {
     }
 })
 
+app.delete("/socketprod/:pid", async (req, res) => {
+    const { pid } = req.params
+    try {
+        const products = await productManager.deleteProduct(pid)
+        io.emit("newproduct", products)
+
+        res.status(200).json({ message: "Produto excluído" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Erro ao excluir produto." })
+    }
+})
+
 module.exports = server
