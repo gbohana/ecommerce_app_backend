@@ -3,16 +3,18 @@
     {{#each products}}
         <li>
             {{#with this}}
-            <p>
-                ID: {{id}},
-                Name: {{title}}, 
-                Description: {{description}},
-                Code: {{code}},
-                Price: {{price}},
-                Status: {{status}},
-                Stock: {{stock}},
-                Categories: {{categories}}
-            </p>
+            <div>
+                <p>
+                    ID: {{id}},
+                    Name: {{title}}, 
+                    Description: {{description}},
+                    Code: {{code}},
+                    Price: {{price}},
+                    Status: {{status}},
+                    Stock: {{stock}},
+                    Categories: {{categories}}
+                </p>
+            </div>
             {{/with}}
         </li>
     {{/each}}

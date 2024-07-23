@@ -10,7 +10,7 @@ productRouter.get("/", async (req, res) => {
         const { limit } = req.query
 
         const products = await productManager.getProducts(limit)
-      
+
         res.status(200).json({ products })
 
     } catch (error) {
@@ -23,7 +23,7 @@ productRouter.get("/:pid", async (req, res) => {
         const { pid } = req.params
 
         const product = await productManager.getProductById(pid)
-        
+
         res.status(200).json({ product })
 
     } catch (error) {
@@ -35,24 +35,24 @@ productRouter.post("/", async (req, res) => {
     const product = req.body
 
     try {
-      await productManager.addProduct(product)
-      res.status(201).json({ message: "Produto cadastrado" })
+        await productManager.addProduct(product)
+        res.status(201).json({ message: "Produto cadastrado" })
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Erro ao cadastrar produto." })
+        console.log(error)
+        res.status(500).json({ error: "Erro ao cadastrar produto." })
     }
 })
 
 productRouter.put("/:pid", async (req, res) => {
     const { pid } = req.params
-    const {category, value} = req.body
+    const { category, value } = req.body
 
     try {
-      await productManager.updateProduct(pid, category, value)
-      res.status(200).json({ message: "Produto atualizado" })
+        await productManager.updateProduct(pid, category, value)
+        res.status(200).json({ message: "Produto atualizado" })
     } catch (error) {
-      console.log(error)
-      res.status(500).json({ error: "Erro ao atualizar produto." })
+        console.log(error)
+        res.status(500).json({ error: "Erro ao atualizar produto." })
     }
 })
 
@@ -60,11 +60,11 @@ productRouter.delete("/:pid", async (req, res) => {
     const { pid } = req.params
     try {
         await productManager.deleteProduct(pid)
-        res.status(200).json({ message: "Produto excluído"})
+        res.status(200).json({ message: "Produto excluído" })
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: "Erro ao excluir produto." })
     }
 })
 
-  module.exports = productRouter
+module.exports = productRouter

@@ -18,7 +18,7 @@ class ManageProducts {
         parsedResult.push(newProduct)
   
         await this.tools.writeFile(parsedResult)
-
+        return parsedResult
     }
 
     updateProduct = async (id, category, value) => {
