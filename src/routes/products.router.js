@@ -1,15 +1,13 @@
 const { Router } = require("express")
-const ManageProducts = require('../ManageProducts')
+const { getProducts, addProduct, deleteProduct, getProductById, updateProduct } = require('../dao/services/products.service')
 
 const productRouter = Router()
-
-const productManager = new ManageProducts()
 
 productRouter.get("/", async (req, res) => {
     try {
         const { limit } = req.query
 
-        const products = await productManager.getProducts(limit)
+        const products = await getProducts(limit)
 
         res.status(200).json({ products })
 
@@ -22,7 +20,7 @@ productRouter.get("/:pid", async (req, res) => {
     try {
         const { pid } = req.params
 
-        const product = await productManager.getProductById(pid)
+        const product = await getProductById(pid)
 
         res.status(200).json({ product })
 
@@ -35,7 +33,7 @@ productRouter.post("/", async (req, res) => {
     const product = req.body
 
     try {
-        await productManager.addProduct(product)
+        await addProduct(product)
         res.status(201).json({ message: "Produto cadastrado" })
     } catch (error) {
         console.log(error)
@@ -45,10 +43,10 @@ productRouter.post("/", async (req, res) => {
 
 productRouter.put("/:pid", async (req, res) => {
     const { pid } = req.params
-    const { category, value } = req.body
+    const { product } = req.body
 
     try {
-        await productManager.updateProduct(pid, category, value)
+        await updateProduct(pid, product)
         res.status(200).json({ message: "Produto atualizado" })
     } catch (error) {
         console.log(error)
@@ -59,7 +57,7 @@ productRouter.put("/:pid", async (req, res) => {
 productRouter.delete("/:pid", async (req, res) => {
     const { pid } = req.params
     try {
-        await productManager.deleteProduct(pid)
+        await deleteProduct(pid)
         res.status(200).json({ message: "Produto excluído" })
     } catch (error) {
         console.log(error)

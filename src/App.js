@@ -1,21 +1,22 @@
 const express = require("express")
+const mongoose = require("mongoose")
 const { engine } = require("express-handlebars")
 
-const ManageProducts = require('./ManageProducts')
-const productManager = new ManageProducts()
+// const ManageProducts = require('./ManageProducts')
+// const productManager = new ManageProducts()
 
 const productRouter = require("./routes/products.router")
 const cartRouter = require("./routes/carts.router")
 const viewRouter = require("./routes/views.router")
 const path = require("path")
 
-const socketIO = require("socket.io")
-const http = require("node:http")
+// const socketIO = require("socket.io")
+// const http = require("node:http")
 
 const app = express()
 
-const server = http.createServer(app)
-const io = socketIO(server)
+// const server = http.createServer(app)
+// const io = socketIO(server)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -31,6 +32,7 @@ app.use("/views", viewRouter)
 app.use("/api/products", productRouter)
 app.use("/api/carts", cartRouter)
 
+/**
 io.on("connection", async (socket) => {
     console.log("Usuário conectado", socket.id)
     const products = await productManager.getProducts()
@@ -63,5 +65,18 @@ app.delete("/socketprod/:pid", async (req, res) => {
         res.status(500).json({ error: "Erro ao excluir produto." })
     }
 })
+**/
+
+mongoose
+  .connect(
+    "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse"
+  )
+  .then(() => {
+    console.log("Mongo conectado");
+  })
+  .catch((error) => {
+    console.log(error);
+    process.exit(1);
+  });
 
 module.exports = server

@@ -1,14 +1,13 @@
 const { Router } = require("express")
-const ManageCart = require("../ManageCart")
+const { createCart, getCartById, addProducttoCart } = require("../dao/services/carts.service")
 
 const cartRouter = Router()
-const cartManager = new ManageCart()
 
 cartRouter.get("/:cid", async (req, res) => {
     try {
         const { cid } = req.params
 
-        const cart = await cartManager.getCartById(cid)
+        const cart = await getCartById(cid)
         
         res.status(200).json({ cart })
 
@@ -20,7 +19,7 @@ cartRouter.get("/:cid", async (req, res) => {
 cartRouter.post("/", async (req, res) => {
     try {
         const { products } = req.body
-        const newCart = await cartManager.createCart(products)
+        const newCart = await createCart(products)
         
         res.status(201).json({ message: newCart })
 
@@ -32,7 +31,7 @@ cartRouter.post("/", async (req, res) => {
 cartRouter.post("/:cid/product/:pid", async (req, res) => {
     try {
         const { cid, pid } = req.params
-        const newProduct = await cartManager.addProducttoCart(cid, pid)
+        const newProduct = await addProducttoCart(cid, pid)
         
         res.status(201).json({ message: newProduct })
 

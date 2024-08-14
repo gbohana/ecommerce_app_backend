@@ -1,4 +1,4 @@
-const Tools = require("./service/Tools")
+const Tools = require("../service/Tools")
 
 class ManageProducts {
     #path = `${__dirname}/data/products.json`
