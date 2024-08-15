@@ -10,13 +10,13 @@ const cartRouter = require("./routes/carts.router")
 const viewRouter = require("./routes/views.router")
 const path = require("path")
 
-// const socketIO = require("socket.io")
-// const http = require("node:http")
+const socketIO = require("socket.io")
+const http = require("node:http")
 
 const app = express()
 
-// const server = http.createServer(app)
-// const io = socketIO(server)
+const server = http.createServer(app)
+const io = socketIO(server)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
