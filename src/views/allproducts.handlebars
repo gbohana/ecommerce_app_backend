@@ -1,0 +1,33 @@
+<h1>All products:</h1>
+
+<div>
+    <label for="search">Search by category:</label>
+    <input type="text" id="search" placeholder="Ex: tables">
+    <button id="searchButton">Search</button>
+
+    <input type="checkbox" id="status" name="status" value="available">
+    <label for="status">Only available items</label>
+
+    <label for="sort">Sort by price:</label>
+    <select name="sort" id="sort">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+    </select>
+</div>
+
+<ul>
+    {{#each products}}
+    <div id="list">
+        <li>{{title}} {{description}} {{code}}</br>
+            {{status}} {{price}} {{stock}} {{categories}}
+        </li>
+    </div>
+    <button>Add to cart</button>
+    {{/each}}
+    {{!-- <p>Next Page: {{result.hasNextPage}}</p> --}}
+</ul>
+
+<button id="previous">Previous</button>
+<button id="next">Next</button>
+
+<script src="/static/js/index.js"></script>

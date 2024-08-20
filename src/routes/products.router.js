@@ -5,9 +5,9 @@ const productRouter = Router()
 
 productRouter.get("/", async (req, res) => {
     try {
-        const { limit } = req.query
+        const { limit, page, sort, query } = req.query
 
-        const products = await getProducts(limit)
+        const products = await getProducts(limit, page, sort, query )
 
         res.status(200).json({ products })
 

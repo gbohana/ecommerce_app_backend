@@ -21,4 +21,12 @@ viewRouter.get("/realtimeproducts", async(req, res) => {
     }
 })
 
+viewRouter.get("/allproducts", async(req, res) => {
+    try {      
+        res.render("allproducts", {style: "index.css" })
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
+
 module.exports = viewRouter;

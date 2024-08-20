@@ -6,10 +6,20 @@ const addProduct = async (product) => {
     return newProduct;
 }
 
-const getProducts = async () => {
-    let products = await productModel.find()
-    products = products.map((product) => product.toJSON());
-    return products;
+const getProducts = async (limit, page, sort, query) => {
+    const options = {
+        page: page ?? 1,
+        limit: limit ?? 10,
+        sort: sort ? {price: sort} : {}, //sort = asc or desc
+        customLabels: {
+            docs: 'payload'
+        }
+    }
+
+    //let products = await productModel.paginate({categories: {$in: ["casa"]}}, {status: "available"}, options)
+    let products = await productModel.paginate(query, options) //query currently being manually input through thunderclient
+
+    return products
 }
 
 const getProductById = async (pid) => {
