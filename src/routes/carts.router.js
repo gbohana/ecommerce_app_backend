@@ -1,5 +1,5 @@
 const { Router } = require("express")
-const { createCart, getCartById, addProducttoCart } = require("../dao/services/carts.service")
+const { createCart, getCartById, addProductToCart, getCarts, emptyCart, addExistingProductToCart } = require("../dao/services/carts.service")
 
 const cartRouter = Router()
 
@@ -16,6 +16,19 @@ cartRouter.get("/:cid", async (req, res) => {
     }
 })
 
+//for debugging
+cartRouter.get("/", async (req, res) => {
+    try {
+        const carts = await getCarts()
+        
+        res.status(200).json({ carts })
+
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
+
+//Create new cart
 cartRouter.post("/", async (req, res) => {
     try {
         const { products } = req.body
@@ -28,10 +41,11 @@ cartRouter.post("/", async (req, res) => {
     }
 })
 
+//Add product to cart
 cartRouter.post("/:cid/product/:pid", async (req, res) => {
     try {
         const { cid, pid } = req.params
-        const newProduct = await addProducttoCart(cid, pid)
+        const newProduct = await addProductToCart(cid, pid)
         
         res.status(201).json({ message: newProduct })
 

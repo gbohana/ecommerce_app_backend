@@ -10,6 +10,7 @@
 
     <label for="sort">Sort by price:</label>
     <select name="sort" id="sort">
+        <option hidden disabled selected value> -- select an option -- </option>
         <option value="asc">Ascending</option>
         <option value="desc">Descending</option>
     </select>
@@ -30,4 +31,58 @@
 <button id="previous">Previous</button>
 <button id="next">Next</button>
 
-<script src="/static/js/index.js"></script>
+<script>
+    const nextButton = document.getElementById('next')
+    const previousButton = document.getElementById('previous')
+    const searchButton = document.getElementById('searchButton')
+    const searchInput = document.getElementById('search')
+
+    if (!{{result.hasNextPage}}) {
+        nextButton.disabled = true;
+    }
+
+    if (!{{result.hasPrevPage}}) {
+        previousButton.disabled = true;
+    }
+
+        // Redirecionamento inicial, com controle para evitar loop
+    /**
+    window.onload = function() {
+    const hasRedirected = sessionStorage.getItem('hasRedirected');
+
+    if (!hasRedirected) {
+        const url = `http://localhost:8080/views/allproducts?page=1`;
+        console.log(url);
+        sessionStorage.setItem('hasRedirected', 'true');
+        window.location.href = url;
+    }
+    }**/
+
+    nextButton.addEventListener('click', () => {
+        const searchQuery = window.location.pathname.split('/')[2];
+        console.log({{result.hasNextPage}})
+        if ({{result.hasNextPage}}) {
+            const url = `http://localhost:8080/views/allproducts/?page={{result.nextPage}}/`;
+            console.log(url);
+            window.location.href = url;
+        }
+    })
+
+    previousButton.addEventListener('click', () => {
+        const searchQuery = window.location.pathname.split('/')[2];
+        if ({{result.hasPrevPage}}) {
+            const url = `http://localhost:8080/views/${encodeURIComponent(searchQuery)}/?page={{result.prevPage}}/2`;
+            console.log(url);
+            window.location.href = url;
+        }
+    });
+
+    // Função para buscar usuários
+    searchButton.addEventListener('click', () => {
+    const searchQuery = searchInput.value.trim();
+    if (searchQuery) {
+        window.location.href = `http://localhost:8080/views/${encodeURIComponent(searchQuery)}/`;
+    }
+    });
+
+</script>
