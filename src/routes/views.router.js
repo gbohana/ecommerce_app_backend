@@ -34,11 +34,14 @@ viewRouter.get("/allproducts", async(req, res) => {
 })
 
 viewRouter.get("/carts/:cid", async(req, res) => {
-    try {        
-        const result = await getCartById()
-        const products = result.products.map((product) => product.toJSON())
-        console.log(result)
-        res.render("cart", {products: products, result: result, style: "index.css" })
+    try {
+        const { cid } = req.params
+
+        const cart = await getCartById(cid)
+
+        const products = cart.products.map((product) => product.toJSON())
+        console.log(products)
+        res.render("cart", {products: products, result: cart, style: "index.css" })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }

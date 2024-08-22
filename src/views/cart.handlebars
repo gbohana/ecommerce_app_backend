@@ -2,14 +2,15 @@
 <ul>
     {{#each products}}
     <div id="list">
-        <li>{{title}} {{description}} {{code}}</br>
-            {{status}} {{price}} {{stock}} {{categories}}
+        <li>{{_id.title}} Description:{{_id.description}} Code:{{_id.code}}</br>
+            Status:{{_id.status}} R${{_id.price}} In stock:{{_id.stock}} Categories:{{_id.categories}}</br>
+            Quantity:{{quantity}}
         </li>
     </div>
-    <button id="empty">Empty cart</button>
     {{/each}}
+    <button id="empty">Empty cart</button>
 </ul>
 
 <script>
-    
+
 </script>

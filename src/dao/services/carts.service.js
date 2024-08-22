@@ -10,10 +10,14 @@ const createCart = async () => {
 };
 
 const getCartById = async (cid) => {
-    const cart = await cartModel.findById(cid);
-
-    return cart;
-};
+    let cart = await cartModel.findOne({_id: cid})
+    .populate({
+        path: 'products._id',
+        model: 'products'
+    })
+    
+    return cart
+}
 
 //for debugging
 const getCarts = async () => {

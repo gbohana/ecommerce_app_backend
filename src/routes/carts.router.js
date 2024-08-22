@@ -41,7 +41,7 @@ cartRouter.post("/", async (req, res) => {
     }
 })
 
-//localhost:8080/api/carts/66c5592a64be9d1bf04b3eb5/product/66c4f7bc8286cf8554fb8ca1
+//ex.: localhost:8080/api/carts/66c5592a64be9d1bf04b3eb5/product/66c4f7bc8286cf8554fb8ca1
 //Add existing product to cart
 cartRouter.put("/:cid/product/:pid", async (req, res) => {
     try {
