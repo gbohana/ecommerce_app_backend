@@ -12,7 +12,7 @@ const createCart = async () => {
 const getCartById = async (cid) => {
     let cart = await cartModel.findOne({_id: cid})
     .populate({
-        path: 'products._id',
+        path: 'products.product',
         model: 'products'
     })
     
@@ -44,7 +44,7 @@ const incrementProductInCart = async (cid, pid) => {
     const _pid = mongoose.Types.ObjectId.createFromHexString(pid)
 
     let products = cart.products
-    let productIndex =  products.findIndex(p => p._id.equals(_pid))
+    let productIndex =  products.findIndex(p => p.product.equals(_pid))
     
     let quantity = products[productIndex].quantity
     products[productIndex].quantity = quantity + 1
@@ -70,7 +70,7 @@ const addProductToCart = async (cid, pid) => {
 
     cartUpdated = await cartModel.updateOne(
         { _id: cid },
-        { $push: {products: {_id: pid, quantity: 1}}  }
+        { $push: {products: {product: pid, quantity: 1}}  }
     )
     return cartUpdated;
 }

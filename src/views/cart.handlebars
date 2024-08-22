@@ -2,8 +2,10 @@
 <ul>
     {{#each products}}
     <div id="list">
-        <li>{{_id.title}} Description:{{_id.description}} Code:{{_id.code}}</br>
-            Status:{{_id.status}} R${{_id.price}} In stock:{{_id.stock}} Categories:{{_id.categories}}</br>
+        <li>{{product.title}}</br>
+            Description:{{product.description}} Code:{{product.code}}</br>
+            Status:{{product.status}} R${{product.price}} In stock:{{product.stock}}</br>
+            Categories:{{product.categories}}</br>
             Quantity:{{quantity}}
         </li>
     </div>

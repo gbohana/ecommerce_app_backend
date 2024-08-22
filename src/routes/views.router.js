@@ -40,7 +40,7 @@ viewRouter.get("/carts/:cid", async(req, res) => {
         const cart = await getCartById(cid)
 
         const products = cart.products.map((product) => product.toJSON())
-        console.log(products)
+
         res.render("cart", {products: products, result: cart, style: "index.css" })
     } catch (error) {
         res.status(500).json({ error: error.message })
