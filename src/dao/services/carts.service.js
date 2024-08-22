@@ -1,8 +1,9 @@
 const cartModel = require("../models/carts.model");
+const mongoose = require('mongoose')
 
-const createCart = async (products) => {
+const createCart = async () => {
     const newCart = {
-        products: products ? products : []
+        products: []
     }
     const addedCart = await cartModel.create(newCart);
     return addedCart;
@@ -11,54 +12,53 @@ const createCart = async (products) => {
 const getCartById = async (cid) => {
     const cart = await cartModel.findById(cid);
 
-    return [cart];
+    return cart;
 };
 
 //for debugging
 const getCarts = async () => {
-    const cart = await cartModel.find();
+    const carts = await cartModel.find();
 
-    return [cart];
+    return carts;
 }
 
 //delete all products inside a cart
 const emptyCart = async (cid) => {
-    const cart = await cartModel.updateOne({ _id: cid , products: []})
+    const cart = await cartModel.updateOne({ _id: cid} , {products: []})
     return cart;
 };
 
-// Add new product to cart
-const addNewProductToCart = async (cid, pid) => {
-    const cartUpdated =  await cartModel.updateOne(
-            { _id: cid },
-            { $push: {pid, quantity: 1}  }
-    )
-
-    return cartUpdated;
+const deleteCart = async (cid) => {
+    const cart = await cartModel.deleteOne({_id: cid})
+    return cart
 }
 
-// Add new existing product
-const addExistingProductToCart = async (cid, pid) => {
-    const cart = await cartModel.getCartById(cid)
+// Increment product quantity
+const incrementProductInCart = async (cid, pid) => {
+    let cart = await getCartById(cid)
+    const _pid = mongoose.Types.ObjectId.createFromHexString(pid)
 
-    let cartUpdated =  cart.products.find(p => p._id === pid)
-    cartUpdated = await cartModel.updateOne(
+    console.log(cart.products, typeof(pid), _pid, typeof(_pid))
+
+    let product =  cart.products.find(p => p._id.equals(_pid))
+    cart = await cartModel.updateOne(
         { _id: cid },
-        { $push: {pid, quantity: p.quantity + 1}  }
+        { $set: {products: { pid, quantity: product.quantity + 1}}  }
     )
 
-    return cartUpdated;
+    return cart;
 }
 
 const addProductToCart = async (cid, pid) => {
-    const cart = await cartModel.getCartById(cid)
+    const cart = await getCartById(cid)
 
-    const isAlready = cart.products.includes(pid)
+    cart.products = cart.products ?? []
 
-    if (isAlready)
-        await addExistingProductToCart(cid, pid)
-    else
-        await addNewProductToCart(cid, pid)
+    cartUpdated = await cartModel.updateOne(
+        { _id: cid },
+        { $push: {products: {_id: pid, quantity: 1}}  }
+    )
+    return cartUpdated;
 }
 
-module.exports = { createCart, getCartById, addProductToCart, getCarts, emptyCart };
+module.exports = { createCart, getCartById, addProductToCart, incrementProductInCart, getCarts, emptyCart, deleteCart };
