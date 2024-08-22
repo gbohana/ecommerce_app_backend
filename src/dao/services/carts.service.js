@@ -38,12 +38,15 @@ const incrementProductInCart = async (cid, pid) => {
     let cart = await getCartById(cid)
     const _pid = mongoose.Types.ObjectId.createFromHexString(pid)
 
-    console.log(cart.products, typeof(pid), _pid, typeof(_pid))
+    //console.log(cart.products, typeof(pid), _pid, typeof(_pid))
 
     let product =  cart.products.find(p => p._id.equals(_pid))
+    //console.log(product)
+
     cart = await cartModel.updateOne(
         { _id: cid },
-        { $set: {products: { pid, quantity: product.quantity + 1}}  }
+        { $set: {'products.$[elem].quantity': product.quantity + 1}  },
+        { arrayFilters: [{'elem._id': _pid}], upsert: true }
     )
 
     return cart;
