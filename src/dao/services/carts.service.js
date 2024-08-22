@@ -34,20 +34,27 @@ const deleteCart = async (cid) => {
 }
 
 // Increment product quantity
+// https://www.mongodb.com/docs/manual/reference/operator/update/positional-filtered/#mongodb-update-up.---identifier--
 const incrementProductInCart = async (cid, pid) => {
     let cart = await getCartById(cid)
     const _pid = mongoose.Types.ObjectId.createFromHexString(pid)
 
-    //console.log(cart.products, typeof(pid), _pid, typeof(_pid))
+    let products = cart.products
+    let productIndex =  products.findIndex(p => p._id.equals(_pid))
+    
+    let quantity = products[productIndex].quantity
+    products[productIndex].quantity = quantity + 1
 
-    let product =  cart.products.find(p => p._id.equals(_pid))
-    //console.log(product)
-
-    cart = await cartModel.updateOne(
-        { _id: cid },
-        { $set: {'products.$[elem].quantity': product.quantity + 1}  },
-        { arrayFilters: [{'elem._id': _pid}], upsert: true }
-    )
+    cart = await cartModel.updateOne({_id: cid}, {products})
+    
+    // or using MongoDB:
+    //
+    // let product =  cart.products.find(p => p._id.equals(_pid))
+    // cart = await cartModel.updateOne(
+    //     { _id: cid },
+    //     { $set: {'products.$[elem].quantity': product.quantity + 1}  },
+    //     { arrayFilters: [{'elem._id': _pid}], upsert: true }
+    // )
 
     return cart;
 }
