@@ -47,4 +47,20 @@ viewRouter.get("/carts/:cid", async(req, res) => {
     }
 })
 
+viewRouter.get("/login", async(req, res) => {
+    try {      
+        res.render("login")
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
+
+viewRouter.get("/register", async(req, res) => {
+    try {      
+        res.render("register")
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
+
 module.exports = viewRouter;

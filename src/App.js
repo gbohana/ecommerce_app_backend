@@ -8,7 +8,13 @@ const { engine } = require("express-handlebars")
 const productRouter = require("./routes/products.router")
 const cartRouter = require("./routes/carts.router")
 const viewRouter = require("./routes/views.router")
+const sessionRouter = require("./routes/session.router")
+const userRouter = require("./routes/user.router")
 const path = require("path")
+
+const session = require("express-session")
+//const FileStore = require("session-file-store")(session)
+const MongoStore = require("connect-mongo")
 
 const socketIO = require("socket.io")
 const http = require("node:http")
@@ -31,6 +37,36 @@ app.set("views", `${__dirname}/views`)
 app.use("/views", viewRouter)
 app.use("/api/products", productRouter)
 app.use("/api/carts", cartRouter)
+app.use("/session", sessionRouter)
+app.use("/api/user", userRouter)
+
+app.use(
+  session({
+    store:
+      //new FileStore({ path: "../sessions", ttl: 100, retries: 0 }),
+      MongoStore.create({
+        mongoUrl:
+          "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse",
+        //mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+        ttl:600,
+      }),
+    secret: "supersecret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+mongoose
+  .connect(
+    "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse"
+  )
+  .then(() => {
+    console.log("Mongo conectado");
+  })
+  .catch((error) => {
+    console.log(error);
+    process.exit(1);
+  });
 
 /**
 io.on("connection", async (socket) => {
@@ -66,17 +102,5 @@ app.delete("/socketprod/:pid", async (req, res) => {
     }
 })
 **/
-
-mongoose
-  .connect(
-    "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse"
-  )
-  .then(() => {
-    console.log("Mongo conectado");
-  })
-  .catch((error) => {
-    console.log(error);
-    process.exit(1);
-  });
 
 module.exports = server

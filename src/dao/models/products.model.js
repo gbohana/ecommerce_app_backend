@@ -11,7 +11,11 @@ const productSchema = new mongoose.Schema({
         unique: true
     },
     price: Number,
-    status: String,
+    status: {
+        type: String,
+        enum: ['available', 'unavailable'],
+        default: 'available'
+    },
     stock: Number,
     categories: {
         type: Array,
