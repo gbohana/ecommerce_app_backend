@@ -14,17 +14,19 @@ viewRouter.get("/home", async(req, res) => {
     }
 })
 
-viewRouter.get("/realtimeproducts", async(req, res) => {
-    try {      
-        res.render("realTimeProducts", {style: "index.css" })
-    } catch (error) {
-        res.status(500).json({ error: error.message })
-    }
-})
+// viewRouter.get("/realtimeproducts", async(req, res) => {
+//     try {      
+//         res.render("realTimeProducts", {style: "index.css" })
+//     } catch (error) {
+//         res.status(500).json({ error: error.message })
+//     }
+// })
 
 viewRouter.get("/allproducts", async(req, res) => {
-    try {        
-        const result = await getProducts()
+    try {
+        const { limit, page, sort, query } = req.query
+
+        const result = await getProducts(limit, page, sort, query)
         const products = result.payload.map((product) => product.toJSON())
             
         res.render("allproducts", {products: products, result: result, style: "index.css" })

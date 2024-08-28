@@ -1,6 +1,7 @@
 const express = require("express");
 const validationUser = require("../middleware/user.middleware");
 const userService = require("../dao/services/users.service");
+const { getProducts } = require("../dao/services/products.service")
 const userRouter = express.Router();
 
 userRouter.get("/", async (req, res) => {
@@ -26,8 +27,10 @@ userRouter.post("/login", async (req, res) => {
     //         req.session.admin = false
     //     }
     // }
-
-    res.render("allproducts", { name: userFound.first_name });
+    const result = await getProducts()
+    const products = result.payload.map((product) => product.toJSON())
+        
+    res.render("allproducts", { products: products, result: result, style: "index.css", name: userFound.first_name });
 });
 
 userRouter.post("/", validationUser, async (req, res) => {
