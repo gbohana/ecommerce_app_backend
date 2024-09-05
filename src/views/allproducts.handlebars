@@ -2,13 +2,13 @@
 
 <h1>All products:</h1>
 <div>
-  <h2>Welcome {{name}}!</h2>
+    <h2>Welcome {{name}}!</h2>
 </div>
 
 <div>
-    <form>
-        <label for="search">Search by category:</label>
-        <input type="text" id="search" placeholder="Ex: tables">
+    <form onsubmit="sendForm()">
+        <label for="searchInput">Search by category:</label>
+        <input type="text" id="searchInput" placeholder="Ex: casa" name="categories">
 
         <input type="checkbox" id="status" name="status" value="available">
         <label for="status">Only available items</label>
@@ -19,7 +19,7 @@
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
         </select>
-        
+
         <button type="submit" id="searchButton">Search</button>
     </form>
 </div>
@@ -30,8 +30,8 @@
         <li>{{title}} {{description}} {{code}}</br>
             {{status}} {{price}} {{stock}} {{categories}}
         </li>
+        <button id="addtocart">Add to cart</button>
     </div>
-    <button>Add to cart</button>
     {{/each}}
     {{!-- <p>Next Page: {{result.hasNextPage}}</p> --}}
 </ul>
@@ -43,17 +43,20 @@
     const nextButton = document.getElementById('next')
     const previousButton = document.getElementById('previous')
     const searchButton = document.getElementById('searchButton')
-    const searchInput = document.getElementById('search')
+    const searchInput = document.getElementById('searchInput')
+    const searchCheckbox = document.getElementById('status')
+    const searchSelect = document.getElementById('sort')
+    const addCartButton = document.querySelectorAll('addtocart')
 
-    if (!{{result.hasNextPage}}) {
+    if (!{{ result.hasNextPage }}) {
         nextButton.disabled = true;
     }
 
-    if (!{{result.hasPrevPage}}) {
+    if (!{{ result.hasPrevPage }}) {
         previousButton.disabled = true;
     }
 
-        // Redirecionamento inicial, com controle para evitar loop
+    // Redirecionamento inicial, com controle para evitar loop
     /**
     window.onload = function() {
     const hasRedirected = sessionStorage.getItem('hasRedirected');
@@ -68,29 +71,58 @@
 
     nextButton.addEventListener('click', () => {
         const searchQuery = window.location.pathname.split('/')[2];
-        console.log({{result.hasNextPage}})
-        if ({{result.hasNextPage}}) {
+        if ( {{ result.hasNextPage }} ) {
             const url = `http://localhost:8080/views/allproducts/?page={{result.nextPage}}/`;
-            console.log(url);
             window.location.href = url;
         }
     })
 
     previousButton.addEventListener('click', () => {
         const searchQuery = window.location.pathname.split('/')[2];
-        if ({{result.hasPrevPage}}) {
+        if ( {{ result.hasPrevPage }} ) {
             const url = `http://localhost:8080/views/${encodeURIComponent(searchQuery)}/?page={{result.prevPage}}/2`;
-            console.log(url);
             window.location.href = url;
         }
     });
 
-    // Função para buscar usuários
-    searchButton.addEventListener('click', () => {
-    const searchQuery = searchInput.value.trim();
-    if (searchQuery) {
-        window.location.href = `http://localhost:8080/views/${encodeURIComponent(searchQuery)}/`;
+    const sendForm = () => {
+        /**let searchQuery = ''
+        searchQuery = searchInput.value && (searchQuery + `?categories=${searchInput.value.trim()}`);
+        searchQuery = searchSelect.value && (searchQuery + `?sort=${searchSelect.value}`);
+        searchQuery = searchCheckbox.value && (searchQuery + `?status=${searchCheckbox.value}`);**/
+
+        const searchQuery = searchInput.value.trim()
+        if (searchQuery) {
+            window.location.href = `http://localhost:8080/views/allproducts/${searchQuery}/`;
+        }
     }
-    });
+
+    addCartButton.forEach(button => {
+        button.addEventListener('click', async () => {
+            const pid = button.getAttribute( {{ _id }} );
+            await addProductToCart( pid, cid );
+        });
+    })
+
+    async function addProductToCart( pid, cid ) {
+        try {
+        const response = await fetch(`/carts/${cid}/${pid}`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            // Desativar botão de add to cart
+        } else {
+            console.error(`Erro ao adicionar ao carrinho. Status: ${response.status}`);
+            // Exibir mensagem de erro ou realizar outra ação apropriada
+        }
+        } catch (error) {
+        console.error('Erro na solicitação de adicionar ao carrinho:', error);
+        // Exibir mensagem de erro ou realizar outra ação apropriada
+        }
+    }
 
 </script>

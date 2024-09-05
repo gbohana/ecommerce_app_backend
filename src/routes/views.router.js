@@ -24,9 +24,9 @@ viewRouter.get("/home", async(req, res) => {
 
 viewRouter.get("/allproducts", async(req, res) => {
     try {
-        const { limit, page, sort, query } = req.query
-
-        const result = await getProducts(limit, page, sort, query)
+        const { limit, page, sort, categories, status } = req.query
+        
+        const result = await getProducts(limit, page, sort, categories, status )
         const products = result.payload.map((product) => product.toJSON())
             
         res.render("allproducts", {products: products, result: result, style: "index.css" })

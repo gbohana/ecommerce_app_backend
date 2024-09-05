@@ -6,7 +6,7 @@ const addProduct = async (product) => {
     return newProduct;
 }
 
-const getProducts = async (limit, page, sort, query) => {
+const getProducts = async (limit, page, sort, categories, status) => {
     const options = {
         page: page ?? 1,
         limit: limit ?? 10,
@@ -16,8 +16,11 @@ const getProducts = async (limit, page, sort, query) => {
         }
     }
 
+    let query = categories ? {categories: categories} : {}
+    query = status ? {status: status, ...query} : query
+    //query && {"categories": query}
     //let products = await productModel.paginate({categories: {$in: ["casa"]}}, {status: "available"}, options)
-    let products = await productModel.paginate(query, options) //query currently being manually input through thunderclient
+    let products = await productModel.paginate(query, options) 
 
     return products
 }
