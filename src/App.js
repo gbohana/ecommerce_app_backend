@@ -37,7 +37,7 @@ app.set("views", `${__dirname}/views`)
 app.use("/views", viewRouter)
 app.use("/api/products", productRouter)
 app.use("/api/carts", cartRouter)
-app.use("/session", sessionRouter)
+app.use("/api/session", sessionRouter)
 app.use("/api/user", userRouter)
 
 app.use(
@@ -51,7 +51,7 @@ app.use(
         ttl:600,
       }),
     secret: "supersecret",
-    resave: false,
+    resave: true,
     saveUninitialized: false,
   })
 );

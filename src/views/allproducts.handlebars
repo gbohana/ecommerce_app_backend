@@ -90,13 +90,19 @@
         searchQuery = searchInput.value && (searchQuery + `?categories=${searchInput.value.trim()}`);
         searchQuery = searchSelect.value && (searchQuery + `?sort=${searchSelect.value}`);
         searchQuery = searchCheckbox.value && (searchQuery + `?status=${searchCheckbox.value}`);**/
+        const currentSearch = window.location.search;
+        console.log(currentSearch)
+
+        if (currentSearch !== searchQuery) {
+            
+        }
 
         const searchQuery = searchInput.value.trim()
         if (searchQuery) {
             window.location.href = `http://localhost:8080/views/allproducts/${searchQuery}/`;
         }
     }
-
+    //TODO
     addCartButton.forEach(button => {
         button.addEventListener('click', async () => {
             const pid = button.getAttribute( {{ _id }} );

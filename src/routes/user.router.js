@@ -1,60 +1,16 @@
 const express = require("express");
 const validationUser = require("../middleware/user.middleware");
-const userService = require("../dao/services/users.service");
-const { getProducts } = require("../dao/services/products.service")
+const { getAllUsers, userLogin, createUser, deleteUser, updateUser } = require("../controllers/users.controllers")
 const userRouter = express.Router();
 
-userRouter.get("/", async (req, res) => {
-    const users = await userService.getUsers()
-    return res.status(200).json(users)
-})
+userRouter.get("/", getAllUsers);
 
-userRouter.post("/login", async (req, res) => {
-    const user = req.body
-    const userFound = await userService.getUsersByEmail(user.email)
-    
-    if (!userFound) {
-        return res.render("loginFail", { email: user.email })
-    }
-    console.log(req.session)
-    // if (userFound.password === user.password) {
-    //     req.session.user = userFound
-    //     req.session.logged = true
+userRouter.post("/login", userLogin);
 
-    //     if (userFound.role === "admin") {
-    //         req.session.admin = true
-    //     } else {
-    //         req.session.admin = false
-    //     }
-    // }
-    const result = await getProducts()
-    const products = result.payload.map((product) => product.toJSON())
-        
-    res.render("allproducts", { products: products, result: result, style: "index.css", name: userFound.first_name });
-});
+userRouter.post("/", validationUser, createUser);
 
-userRouter.post("/", validationUser, async (req, res) => {
-    const user = req.body;
-    const userCreated = await userService.createUser(user);
-    res.render("userCreated", { name: userCreated.first_name });
-});
+userRouter.delete("/:email", deleteUser);
 
-userRouter.delete("/:email", async (req, res) => {
-    const { email } = req.params;
-    const user = await userService.deleteUser(email);
-    res.status(200).json(user)
-});
-
-userRouter.put("/:uid", validationUser, async (req, res) => {
-    try {
-        const user = req.body;
-        const { uid } = req.params;
-
-        const newUser = await userService.updateUser(user, uid);
-        res.status(201).json(newUser);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+userRouter.put("/:uid", validationUser, updateUser);
 
 module.exports = userRouter;

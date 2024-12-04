@@ -5,7 +5,8 @@ const sessionRouter = express.Router();
 const auth = (req, res, next) => {
   if (req.session?.admin) {
     return next();
-  }
+  } 
+  console.log(req.session)
   res.send("Não autorizado");
 };
 

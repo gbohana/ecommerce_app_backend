@@ -18,7 +18,6 @@ const getProducts = async (limit, page, sort, categories, status) => {
 
     let query = categories ? {categories: categories} : {}
     query = status ? {status: status, ...query} : query
-    //query && {"categories": query}
     //let products = await productModel.paginate({categories: {$in: ["casa"]}}, {status: "available"}, options)
     let products = await productModel.paginate(query, options) 
 

@@ -1,3 +1,4 @@
+const { createHash } = require("../../service/utils");
 const userModel = require("../models/user.model")
 
 const getUsers = async () => {
@@ -6,11 +7,12 @@ const getUsers = async () => {
 };
 
 const createUser = async ({ first_name, last_name, email, password, role }) => {
+    const newPass = await createHash(password)
     const userCreated = await userModel.create({
         first_name,
         last_name,
         email,
-        password,
+        password: newPass,
         role
     });
     return userCreated;
