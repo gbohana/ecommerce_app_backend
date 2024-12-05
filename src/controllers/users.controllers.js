@@ -1,6 +1,5 @@
 const userService = require("../dao/services/users.service");
 const { getProducts } = require("../dao/services/products.service");
-const { isValidPassword } = require("../service/utils");
 
 const getAllUsers = async (req, res) => {
     const users = await userService.getUsers()
@@ -8,32 +7,19 @@ const getAllUsers = async (req, res) => {
 }
 
 const userLogin = async (req, res) => {
-    const user = req.body
-    const userFound = await userService.getUsersByEmail(user.email)
-    
-    if (!userFound) {
-        return res.render("loginFail", { email: user.email })
-        // return res.status(400).json("User not found")
+    console.log("to no login rota");
+    if (!req.user)
+        return res.status(400).json({ status: "error", message: "Unauthorized" });
+    req.session.user = {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        role: req.user.role,
     }
-    console.log(userFound)
-    const isValid = await isValidPassword(user.password, userFound)
-    if (isValid) {
-    //     req.session.user = userFound
-    //     req.session.logged = true
-
-    //     if (userFound.role === "admin") {
-    //         req.session.admin = true
-    //     } else {
-    //         req.session.admin = false
-    //     }
     const result = await getProducts()
     const products = result.payload.map((product) => product.toJSON())
     //return res.status(200).json(products)
-    res.render("allproducts", { products: products, result: result, style: "index.css", name: userFound.first_name });
-
-    } else {
-        return res.status(401).json("Wrong password")
-    }
+    return res.redirect("/views/allproducts", { products: products, result: result, style: "index.css", name: userFound.first_name });
 };
 
 const createUser = async (req, res) => {
