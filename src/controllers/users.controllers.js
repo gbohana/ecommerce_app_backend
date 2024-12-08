@@ -1,5 +1,5 @@
 const userService = require("../dao/services/users.service");
-const { getProducts } = require("../dao/services/products.service");
+const {generateToken, authToken } = require("../service/jwt.utils")
 
 const getAllUsers = async (req, res) => {
     const users = await userService.getUsers()
@@ -7,25 +7,16 @@ const getAllUsers = async (req, res) => {
 }
 
 const userLogin = async (req, res) => {
-    console.log("to no login rota");
-    if (!req.user)
-        return res.status(400).json({ status: "error", message: "Unauthorized" });
-    req.session.user = {
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        role: req.user.role,
-    }
-    const result = await getProducts()
-    const products = result.payload.map((product) => product.toJSON())
-    //return res.status(200).json(products)
-    return res.redirect("/views/allproducts", { products: products, result: result, style: "index.css", name: userFound.first_name });
+    //const result = await getProducts()
+    ///const products = result.payload.map((product) => product.toJSON())
+    const accessToken = generateToken(req.body)
+    return res.status(200).send(accessToken)
 };
 
 const createUser = async (req, res) => {
     const user = req.body;
     const userCreated = await userService.createUser(user);
-    res.render("userCreated", { name: userCreated.first_name });
+    return res.status(200).json(userCreated)
 };
 
 const deleteUser = async (req, res) => {

@@ -39,7 +39,7 @@ const initializePassport = () => {
                     return done(null, false);
                 }
                 const isPasswordValidTest = await isValidPassword(password, userFound);
-                console.log("Is password valid?", isPasswordValidTest);
+                //console.log("Is password valid?", isPasswordValidTest);
                 if (isPasswordValidTest) {
                     return done(null, userFound);
                 } else {

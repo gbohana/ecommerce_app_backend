@@ -6,7 +6,9 @@ const passport = require("passport")
 const initializePassport = require("./config/passport.config")
 const cookieParser = require("cookie-parser");
 const session = require("express-session")
+const cors = require("cors")
 const path = require("path")
+require('dotenv').config()
 
 const socketIO = require("socket.io")
 const http = require("node:http")
@@ -16,8 +18,9 @@ const cartRouter = require("./routes/carts.router")
 const viewRouter = require("./routes/views.router")
 const sessionRouter = require("./routes/session.router")
 const userRouter = require("./routes/user.router")
+const cookieRouter = require("./routes/cookie.router")
 
-//const FileStore = require("session-file-store")(session)
+const FileStore = require("session-file-store")(session)
 const app = express()
 
 const server = http.createServer(app)
@@ -26,6 +29,23 @@ const io = socketIO(server)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser("newcookie"));
+app.use(cors())
+
+app.use(
+  session({
+    store:
+      new FileStore({ path: "../sessions", ttl: 1000, retries: 0 }),
+      // MongoStore.create({
+      //   mongoUrl:
+      //     "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse",
+      //   mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      //   ttl: 600,
+      // }),
+    secret: "supersecret",
+    resave: false,
+    saveUninitialized: false,
+  })
+)
 
 const staticPath = path.join(`${__dirname}/public`)
 app.use("/static", express.static(staticPath))
@@ -38,12 +58,11 @@ app.use("/views", viewRouter)
 app.use("/api/products", productRouter)
 app.use("/api/carts", cartRouter)
 app.use("/api/session", sessionRouter)
+app.use("/api/cookies", cookieRouter)
 app.use("/api/user", userRouter)
 
 mongoose
-  .connect(
-    "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse"
-  )
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Mongo conectado");
   })
@@ -52,27 +71,9 @@ mongoose
     process.exit(1);
   });
 
-app.use(
-  session({
-    store:
-      //new FileStore({ path: "../sessions", ttl: 100, retries: 0 }),
-      MongoStore.create({
-        mongoUrl:
-          "mongodb+srv://gbohana:i5LZnrTtbumA1jQT@coderhouse.q50ez.mongodb.net/?retryWrites=true&w=majority&appName=CoderHouse",
-        //mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-        ttl: 600,
-      }),
-    secret: "supersecret",
-    resave: false,
-    saveUninitialized: false,
-  })
-)
-
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
-
-
 
 /**
 io.on("connection", async (socket) => {

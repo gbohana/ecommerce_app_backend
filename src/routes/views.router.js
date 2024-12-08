@@ -28,8 +28,8 @@ viewRouter.get("/allproducts", async(req, res) => {
         
         const result = await getProducts(limit, page, sort, categories, status )
         const products = result.payload.map((product) => product.toJSON())
-            
-        res.render("allproducts", {products: products, result: result, style: "index.css" })
+        console.log(res)
+        res.render("allproducts", {products: products, result: result, style: "index.css", name: req.session.user.first_name  })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
