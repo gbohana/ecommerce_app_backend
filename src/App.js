@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session")
 const cors = require("cors")
 const path = require("path")
-require('dotenv').config()
+const config = require("./config/config")
 
 const socketIO = require("socket.io")
 const http = require("node:http")
@@ -62,7 +62,7 @@ app.use("/api/cookies", cookieRouter)
 app.use("/api/user", userRouter)
 
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(config.mongoUrl)
   .then(() => {
     console.log("Mongo conectado");
   })

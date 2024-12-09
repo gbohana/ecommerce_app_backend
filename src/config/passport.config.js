@@ -4,6 +4,7 @@ const jwt = require("passport-jwt");
 const { createHash, isValidPassword } = require("../utils/utils");
 const { generateToken } = require("../utils/jwt.utils");
 const userService = require("../dao/services/users.service");
+const config = require('./config')
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
@@ -19,7 +20,7 @@ const cookieExtractor = (req) => {
 const initializePassport = () => {
     passport.use("jwt", new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: process.env.JWT_PRIVATE_KEY,
+        secretOrKey: config.jwtPrivateKey,
     },
         async (jwt_payload, done) => {
             try {

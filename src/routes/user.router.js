@@ -16,8 +16,8 @@ userRouter.post("/login",
 );
 
 userRouter.post("/", 
-    passport.authenticate("register", { failureRedirect: "/register" }), 
-    //validationUser, 
+    //passport.authenticate("register", { failureRedirect: "/register" }), 
+    validationUser, 
     createUser
 );
 
