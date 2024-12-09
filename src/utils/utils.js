@@ -11,7 +11,21 @@ const isValidPassword = async (password, user) => {
   return valid;
 };
 
+const authorization = (role) => {
+  return async (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ erro: "Unathorized" });
+    }
+    console.log(req.user.role, role);
+    if (req.user.role !== role) {
+      return res.status(403).json({ erro: "Not authorized" });
+    }
+    next();
+  };
+};
+
 module.exports = {
   createHash,
   isValidPassword,
+  authorization
 };
