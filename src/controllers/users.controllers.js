@@ -1,5 +1,6 @@
 const userService = require("../dao/services/users.service");
-const {generateToken, authToken } = require("../service/jwt.utils")
+const { generateToken } = require("../utils/jwt.utils")
+const { isValidPassword } = require("../utils/utils");
 
 const getAllUsers = async (req, res) => {
     const users = await userService.getUsers()
@@ -7,10 +8,35 @@ const getAllUsers = async (req, res) => {
 }
 
 const userLogin = async (req, res) => {
-    //const result = await getProducts()
-    ///const products = result.payload.map((product) => product.toJSON())
-    const accessToken = generateToken(req.body)
-    return res.status(200).send(accessToken)
+    const { email, password } = req.body;
+    let userFound = await userService.getUsersByEmail(email);
+
+    if (!userFound) {
+        return res
+            .status(400)
+            .send({ status: "error", error: "Invalid credentials" });
+    }
+
+    const isPasswordValidTest = await isValidPassword(password, userFound);
+    if (isPasswordValidTest) {
+        let user = userFound.toJSON(); // Convert to plain object 
+        //.toJSON() is used to strip additional metadata or serialize the object into a plain structure
+        delete user.password;
+
+        const accessToken = generateToken(user);
+        user.token = accessToken;
+
+        return res.status(200)
+            .cookie('accessToken', accessToken, {
+                maxAge: 60 * 60 * 1000,
+                httpOnly: true
+            })
+            .send({ message: "Sent" })
+    } else {
+        return res
+            .status(400)
+            .send({ status: "error", error: "Invalid credentials" });
+    }
 };
 
 const createUser = async (req, res) => {
@@ -37,4 +63,12 @@ const updateUser = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsers, userLogin, createUser, deleteUser, updateUser };
+const getCurrentUser = (req, res) => {
+    try {
+        res.status(200).json(req.user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+module.exports = { getAllUsers, userLogin, createUser, deleteUser, updateUser, getCurrentUser };

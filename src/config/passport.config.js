@@ -1,10 +1,38 @@
 const passport = require("passport");
 const local = require("passport-local");
+const jwt = require("passport-jwt");
+const { createHash, isValidPassword } = require("../utils/utils");
+const { generateToken } = require("../utils/jwt.utils");
 const userService = require("../dao/services/users.service");
-const { createHash, isValidPassword } = require("../service/utils");
+
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
+
+const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) {
+        return (token = req.cookies["accessToken"]);
+    }
+};
+
 
 const initializePassport = () => {
-    passport.use("register", new local.Strategy({ passReqToCallback: true, usernameField: "email"},
+    passport.use("jwt", new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.JWT_PRIVATE_KEY,
+    },
+        async (jwt_payload, done) => {
+            try {
+                return done(null, jwt_payload);
+            } catch (error) {
+                return done(error);
+            }
+        }
+    )
+    );
+
+    // Local strategies
+    passport.use("register", new local.Strategy({ passReqToCallback: true, usernameField: "email" },
         async (req, username, password, done) => {
             const { first_name, last_name, email, role } = req.body;
             try {
@@ -39,9 +67,16 @@ const initializePassport = () => {
                     return done(null, false);
                 }
                 const isPasswordValidTest = await isValidPassword(password, userFound);
-                //console.log("Is password valid?", isPasswordValidTest);
+
                 if (isPasswordValidTest) {
-                    return done(null, userFound);
+                    let user = [userFound];
+                    user = user.map((u) => u.toJSON());
+                    console.log(user)
+                    delete user[0].password;
+                    const accessToken = generateToken(user[0]);
+                    user[0].token = accessToken;
+                    console.log(user)
+                    return done(null, user[0]);
                 } else {
                     return done(null, false);
                 }
@@ -52,6 +87,7 @@ const initializePassport = () => {
     )
     );
     passport.serializeUser((user, done) => {
+        //console.log(user)
         done(null, user._id);
     });
 

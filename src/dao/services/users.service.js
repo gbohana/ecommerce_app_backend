@@ -1,4 +1,4 @@
-const { createHash } = require("../../service/utils");
+const { createHash } = require("../../utils/utils");
 const userModel = require("../models/user.model")
 
 const getUsers = async () => {

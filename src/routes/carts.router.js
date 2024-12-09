@@ -2,6 +2,7 @@ const { Router } = require("express")
 const cartRouter = Router()
 
 const { getCartById, getCarts, createCart, addProductToCart, incrementProductInCart, deleteCart, emptyCart } = require("../controllers/carts.controllers")
+const { authToken } = require("../utils/jwt.utils")
 
 cartRouter.get("/:cid", getCartById)
 
