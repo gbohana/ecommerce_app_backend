@@ -8,7 +8,11 @@ const validationUser = require("../middleware/user.middleware");
 const passportCall = require("../utils/passport.utils")
 const { authorization } = require("../utils/utils")
 
-userRouter.get("/", getAllUsers);
+userRouter.get("/", 
+    passportCall("jwt"), 
+    authorization("admin"),
+    getAllUsers
+);
 
 userRouter.post("/login", 
     //passport.authenticate("login", { failureRedirect: "/login" }), 
@@ -21,9 +25,18 @@ userRouter.post("/",
     createUser
 );
 
-userRouter.delete("/:email", deleteUser);
+userRouter.delete("/:email", 
+    passportCall("jwt"), 
+    authorization("admin"),
+    deleteUser
+);
 
-userRouter.put("/:uid", validationUser, updateUser);
+userRouter.put("/:uid", 
+    validationUser, 
+    passportCall("jwt"), 
+    authorization("admin"),
+    updateUser
+);
 
 userRouter.get("/current", 
     passportCall("jwt"), 
